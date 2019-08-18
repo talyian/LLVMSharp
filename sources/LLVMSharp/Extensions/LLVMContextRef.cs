@@ -157,7 +157,7 @@ namespace LLVMSharp
             }
         }
 
-        
+
         public LLVMModuleRef ParseBitcode(LLVMMemoryBufferRef MemBuf)
         {
             if (!TryParseBitcode(MemBuf, out LLVMModuleRef M, out string Message))

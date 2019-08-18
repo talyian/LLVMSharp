@@ -5,6 +5,15 @@ namespace LLVMSharp
 {
     public unsafe partial struct LLVMTargetRef : IEquatable<LLVMTargetRef>
     {
+        public static LLVMTargetRef GetFromTriple(string triple)
+        {
+            LLVMTarget* target;
+            sbyte* error;
+            var marsh = new MarshaledString(triple);
+            int result = LLVM.GetTargetFromTriple(marsh.Value, &target, &error);
+            return target;
+        }
+
         public static string DefaultTriple
         {
             get
@@ -21,6 +30,39 @@ namespace LLVMSharp
             }
         }
 
+        public static LLVMTargetRef Default
+        {
+            get
+            {
+                var triple = LLVM.GetDefaultTargetTriple();
+                if (triple is null)
+                {
+                    // TODO?
+                    return null;
+                }
+                LLVMTarget* target;
+                sbyte* error;
+                int result = LLVM.GetTargetFromTriple(triple, &target, &error);
+                if (result > 0) {
+                    // TODO
+                }
+                return target;
+
+            }
+        }
+
+        public LLVMTargetMachineRef CreateMachine(
+            string triple, string CPU, string features,
+            LLVMCodeGenOptLevel optLevel,
+            LLVMRelocMode relocMode,
+            LLVMCodeModel codeModel) {
+            var _triple = new MarshaledString(triple);
+            var _CPU = new MarshaledString(CPU);
+            var _features = new MarshaledString(features);
+            return LLVM.CreateTargetMachine(
+                this, _triple.Value, _CPU.Value, _features.Value,
+                optLevel, relocMode, codeModel);
+        }
         public static LLVMTargetRef First => LLVM.GetFirstTarget();
 
         public static IEnumerable<LLVMTargetRef> Targets

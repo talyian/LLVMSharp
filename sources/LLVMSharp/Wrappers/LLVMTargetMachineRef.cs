@@ -7,9 +7,12 @@ namespace LLVMSharp
         public LLVMTargetMachineRef(IntPtr pointer)
         {
             Pointer = pointer;
+            IsDisposed = false;
         }
 
         public IntPtr Pointer;
+
+        public bool IsDisposed;
 
         public static implicit operator LLVMTargetMachineRef(LLVMOpaqueTargetMachine* value)
         {
